@@ -20,12 +20,17 @@ npm start
 ```
 
 API Endpoints
-
+-----------------------
 GET /products: Brings all products.
+-----------------------
 GET /products/:id: Brings a specific product.
+-----------------------
 POST /products: A new product is formed.
+-----------------------
 PUT /products/:id: Updates a specific product.
+-----------------------
 DELETE /products/:id: Deletes a specific product.
+-----------------------
 
 POSTMAN AND BROWSER PHOTOS:
 -----------------------
