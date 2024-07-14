@@ -10,42 +10,59 @@ export class ProductController {
   };
 
   static getOneById = async (req: Request, res: Response) => {
+    const { id } = req.params;
     const productRepository = getRepository(Product);
-    const product = await productRepository.findOne({where: {id: parseInt(req.params.id, 10)}});
-    if (!product) {
+    try {
+      const product = await productRepository.findOneOrFail({ where: { id: parseInt(id) } });
+      res.send(product);
+    } catch (error) {
       res.status(404).send("Product not found");
-      return;
     }
-    res.send(product);
   };
 
   static create = async (req: Request, res: Response) => {
+    const { name, description, price, inventory } = req.body;
+    const product = new Product();
+    product.name = name;
+    product.description = description;
+    product.price = price;
+    product.inventory = inventory;
+
     const productRepository = getRepository(Product);
-    const product = productRepository.create(req.body);
-    await productRepository.save(product);
-    res.status(201).send(product);
+    try {
+      await productRepository.save(product);
+      res.status(201).send("Product created");
+    } catch (error) {
+      res.status(500).send("Error creating product");
+    }
   };
 
   static update = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, description, price, inventory } = req.body;
     const productRepository = getRepository(Product);
-    const product = await productRepository.findOne({where: {id: parseInt(req.params.id, 10)}});
-    if (!product) {
+    try {
+      const product = await productRepository.findOneOrFail({ where: { id: parseInt(id) } });
+      product.name = name;
+      product.description = description;
+      product.price = price;
+      product.inventory = inventory;
+      await productRepository.save(product);
+      res.send("Product updated");
+    } catch (error) {
       res.status(404).send("Product not found");
-      return;
     }
-    productRepository.merge(product, req.body);
-    await productRepository.save(product);
-    res.send(product);
   };
 
   static delete = async (req: Request, res: Response) => {
+    const { id } = req.params;
     const productRepository = getRepository(Product);
-    const product = await productRepository.findOne({where: {id: parseInt(req.params.id, 10)}});
-    if (!product) {
+    try {
+      await productRepository.findOneOrFail({ where: { id: parseInt(id) } });
+      await productRepository.delete(id);
+      res.send("Product deleted");
+    } catch (error) {
       res.status(404).send("Product not found");
-      return;
     }
-    await productRepository.remove(product);
-    res.status(204).send();
   };
 }

@@ -1,0 +1,20 @@
+# Resmi Node.js görüntüsünü kullanıyoruz
+FROM node:14
+
+# Çalışma dizinini ayarlıyoruz
+WORKDIR /usr/src/app
+
+# package.json ve package-lock.json dosyalarını çalışma dizinine kopyalıyoruz
+COPY package*.json ./
+
+# Projenin bağımlılıklarını yüklüyoruz
+RUN npm install
+
+# Uygulama kaynak dosyalarını kopyalıyoruz
+COPY . .
+
+# Uygulamanın dinleyeceği portu belirtiyoruz
+EXPOSE 3000
+
+# Uygulamanın başlatılacağı komutu belirtiyoruz
+CMD ["npm", "start"]

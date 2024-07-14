@@ -23,38 +23,58 @@ ProductController.getAll = (req, res) => __awaiter(void 0, void 0, void 0, funct
     res.send(products);
 });
 ProductController.getOneById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
     const productRepository = (0, typeorm_1.getRepository)(Product_1.Product);
-    const product = yield productRepository.findOne({ where: { id: parseInt(req.params.id, 10) } });
-    if (!product) {
-        res.status(404).send("Product not found");
-        return;
+    try {
+        const product = yield productRepository.findOneOrFail({ where: { id: parseInt(id) } });
+        res.send(product);
     }
-    res.send(product);
+    catch (error) {
+        res.status(404).send("Product not found");
+    }
 });
 ProductController.create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, description, price, inventory } = req.body;
+    const product = new Product_1.Product();
+    product.name = name;
+    product.description = description;
+    product.price = price;
+    product.inventory = inventory;
     const productRepository = (0, typeorm_1.getRepository)(Product_1.Product);
-    const product = productRepository.create(req.body);
-    yield productRepository.save(product);
-    res.status(201).send(product);
+    try {
+        yield productRepository.save(product);
+        res.status(201).send("Product created");
+    }
+    catch (error) {
+        res.status(500).send("Error creating product");
+    }
 });
 ProductController.update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { name, description, price, inventory } = req.body;
     const productRepository = (0, typeorm_1.getRepository)(Product_1.Product);
-    const product = yield productRepository.findOne({ where: { id: parseInt(req.params.id, 10) } });
-    if (!product) {
-        res.status(404).send("Product not found");
-        return;
+    try {
+        const product = yield productRepository.findOneOrFail({ where: { id: parseInt(id) } });
+        product.name = name;
+        product.description = description;
+        product.price = price;
+        product.inventory = inventory;
+        yield productRepository.save(product);
+        res.send("Product updated");
     }
-    productRepository.merge(product, req.body);
-    yield productRepository.save(product);
-    res.send(product);
+    catch (error) {
+        res.status(404).send("Product not found");
+    }
 });
 ProductController.delete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
     const productRepository = (0, typeorm_1.getRepository)(Product_1.Product);
-    const product = yield productRepository.findOne({ where: { id: parseInt(req.params.id, 10) } });
-    if (!product) {
-        res.status(404).send("Product not found");
-        return;
+    try {
+        yield productRepository.findOneOrFail({ where: { id: parseInt(id) } });
+        yield productRepository.delete(id);
+        res.send("Product deleted");
     }
-    yield productRepository.remove(product);
-    res.status(204).send();
+    catch (error) {
+        res.status(404).send("Product not found");
+    }
 });
