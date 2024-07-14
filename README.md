@@ -1,4 +1,3 @@
-# typscript-backend
 # E-commerce Backend
 
 This is the backend for the E-commerce project built with TypeScript, Express, TypeORM, and PostgreSQL.
@@ -79,11 +78,18 @@ DELETE /products/:id: Deletes a specific product.
 ## Project Structure
 
 src/ - Source files
+
 dist/ - Compiled files
+
 node_modules/ - Node.js dependencies
+
 docker-compose.yml - Docker configuration
+
 Dockerfile - Docker image configuration
+
 .env - Environment variables
 
+
 ## License
+
 MIT
